@@ -252,6 +252,7 @@ function keyPressed() {
     game = true
   }
 }
+
 function gameInfoText() {
   textAlign(LEFT)
   fill(255, 255, 255)
