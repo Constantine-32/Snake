@@ -48,16 +48,16 @@ class Cell {
   }
 
   draw() {
-    let x0 = this.x * dim
-    let x1 = x0 + dim
-    let y0 = this.y * dim
-    let y1 = y0 + dim
+    const dim = height / 50
+    const x0 = this.x * dim
+    const x1 = x0 + dim
+    const y0 = this.y * dim
+    const y1 = y0 + dim
 
     noStroke()
     fill('#27ae60')
     rect(x0, y0, dim, dim)
-    stroke('#111')
-
+    stroke('#2ecc71')
     if (this.w[0]) line(x0, y0, x1, y0)
     if (this.w[1]) line(x1, y0, x1, y1)
     if (this.w[2]) line(x1, y1, x0, y1)
@@ -162,7 +162,7 @@ class Snake {
 
   draw() {
     this.updateWalls()
-    background('#111')
+    background('#0e0e0e')
     for (let cell of this.body)
       cell.draw()
   }
@@ -179,19 +179,15 @@ class Apple {
   }
 
   draw() {
-    stroke('#111')
+    const dim = height / 50
+    stroke('#e74c3c')
     fill('#c0392b')
     rect(this.x * dim, this.y * dim,  dim,  dim)
   }
 }
 
-let cnv
-
-const row = 40
-const col = 40
-const dim = 10
-const hei = row * dim + 1
-const wid = col * dim + 1
+const row = 50
+const col = 50
 
 let game = true
 let ticks = 0
@@ -206,16 +202,27 @@ function centerCanvas() {
 }
 
 function setup() {
-  cnv = createCanvas(wid, hei)
-  centerCanvas()
+  createCenteredCanvas()
   frameRate(60)
-  background(255, 0, 200)
   snake.draw()
   apple.draw()
 }
 
 function windowResized() {
-  centerCanvas()
+  createCenteredCanvas()
+  snake.draw()
+  apple.draw()
+}
+
+function createCenteredCanvas() {
+  const size =
+    (windowWidth <= 540 || windowHeight <= 630) +
+    (windowWidth <= 960 || windowHeight <= 800)
+  const dim = [600, 450, 300][size]
+  createCanvas(dim, dim).position(
+    (windowWidth - width) / 2,
+    (windowHeight - height) / 2
+  )
 }
 
 function draw() {
@@ -236,10 +243,12 @@ function draw() {
       }
       snake.draw()
       apple.draw()
-      gameInfoText()
-    } else gameOverText()
+    }
     ticks = 0
   }
+  if (!game) gameOverText()
+  gameInfoText()
+  drawFrame()
   ticks++
 }
 
@@ -255,18 +264,27 @@ function keyPressed() {
 
 function gameInfoText() {
   textAlign(LEFT)
-  fill(255, 255, 255)
+  fill('#fff')
   textSize(12)
   // text('Apple coords: ' + apple.x + ', ' + apple.y, 4, 16)
   // text('Snake coords: ' + snake.x + ', ' + snake.y, 4, 32)
-  text('Snake length: ' + snake.length, 294, 390)
+  text('Snake length: ' + snake.length, width - 106, height - 10)
 }
 
 function gameOverText() {
   textAlign(CENTER)
-  fill(255, 255, 255)
+  fill('#fff')
   textSize(42)
-  text('Game Over!', 200, 200)
+  text('Game Over!', width/2, height/2)
   textSize(18)
-  text('(Press \'R\' to restart)', 200, 220)
+  text('(Press \'R\' to restart)', width/2,  height/2 + 20)
+}
+
+function drawFrame() {
+  stroke('#000')
+  strokeWeight(1)
+  line(0, 0, width, 0)
+  line(0, 0, 0, height)
+  line(width-1, height-1, width-1, 0)
+  line(width-1, height-1, 0, height-1)
 }
